@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal App ❤️</title>
 
+<link rel="stylesheet" href="style.css">
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCf9X-3TamQG3deN03HM9y1HIiTMufNE-k",
+  authDomain: "proposal-app-aaa47.firebaseapp.com",
+  projectId: "proposal-app-aaa47",
+  storageBucket: "proposal-app-aaa47.firebasestorage.app",
+  messagingSenderId: "413088276490",
+  appId: "1:413088276490:web:93396e2e2a616c32577ff3",
+  measurementId: "G-L26ZQE9GVJ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.saveProposal = async () => {
+
+const yourName = document.getElementById("yourName").value;
+const partnerName = document.getElementById("partnerName").value;
+const message = document.getElementById("message").value;
+
+if(!yourName || !partnerName){
+alert("Fill all fields");
+return;
+}
+
+const docRef = await addDoc(collection(db,"proposals"),{
+yourName,
+partnerName,
+message,
+created: Date.now()
+});
+
+const shareLink =
+window.location.origin +
+window.location.pathname +
+"?id=" +
+docRef.id;
+
+document.getElementById("shareLink").value = shareLink;
+
+document.getElementById("formPage").style.display="none";
+document.getElementById("proposalPage").style.display="block";
+
+document.getElementById("proposalText").innerHTML=
+`${partnerName}, Will You Be Mine Forever? ❤️`;
+};
+
+</script>
+
+</head>
+<body>
+
+<div id="hearts"></div>
+
+<section id="formPage" class="card">
+
+<h1>❤️ Proposal Generator ❤️</h1>
+
+<input id="yourName" placeholder="Your Name">
+
+<input id="partnerName" placeholder="Partner Name">
+
+<textarea id="message" placeholder="Your Message"></textarea>
+
+<button onclick="saveProposal()">Generate Proposal</button>
+
+</section>
+
+<section id="proposalPage" class="card" style="display:none">
+
+<h1 id="proposalText"></h1>
+
+<p>Do You Love Me?</p>
+
+<div class="buttons">
+
+<button id="yesBtn">YES ❤️</button>
+
+<button id="noBtn">NO 😢</button>
+
+</div>
+
+<br>
+
+<input id="shareLink" readonly>
+
+</section>
+
+<section id="successPage" class="card" style="display:none">
+
+<img
+src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
+class="gif">
+
+<h1>Yayyyyy ❤️</h1>
+
+<h2>She Said YES 🎉</h2>
+
+</section>
+
+<script src="script.js"></script>
+
+</body>
+</html>
