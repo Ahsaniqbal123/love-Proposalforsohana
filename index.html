@@ -10,6 +10,7 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getFirestore,
   collection,
@@ -37,16 +38,18 @@ const yourName = document.getElementById("yourName").value;
 const partnerName = document.getElementById("partnerName").value;
 const message = document.getElementById("message").value;
 
-if(!yourName || !partnerName){
-alert("Fill all fields");
-return;
+if (!yourName || !partnerName) {
+  alert("Fill all fields");
+  return;
 }
 
-const docRef = await addDoc(collection(db,"proposals"),{
-yourName,
-partnerName,
-message,
-created: Date.now()
+try {
+
+const docRef = await addDoc(collection(db, "proposals"), {
+  yourName,
+  partnerName,
+  message,
+  created: Date.now()
 });
 
 const shareLink =
@@ -57,12 +60,61 @@ docRef.id;
 
 document.getElementById("shareLink").value = shareLink;
 
-document.getElementById("formPage").style.display="none";
-document.getElementById("proposalPage").style.display="block";
+document.getElementById("formPage").style.display = "none";
+document.getElementById("proposalPage").style.display = "block";
 
-document.getElementById("proposalText").innerHTML=
+document.getElementById("proposalText").innerHTML =
 `${partnerName}, Will You Be Mine Forever? ❤️`;
+
+alert("Proposal Created! Copy the link below.");
+
+} catch (error) {
+
+console.error(error);
+alert("Error creating proposal");
+
+}
+
 };
+
+window.addEventListener("load", async () => {
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+if (!id) return;
+
+document.getElementById("formPage").style.display = "none";
+
+try {
+
+const proposalRef = doc(db, "proposals", id);
+const proposalSnap = await getDoc(proposalRef);
+
+if (proposalSnap.exists()) {
+
+const data = proposalSnap.data();
+
+document.getElementById("proposalPage").style.display = "block";
+
+document.getElementById("proposalText").innerHTML =
+`${data.partnerName}, Will You Be Mine Forever? ❤️`;
+
+document.getElementById("shareLink").style.display = "none";
+
+} else {
+
+alert("Proposal not found");
+
+}
+
+} catch (error) {
+
+console.error(error);
+
+}
+
+});
 
 </script>
 
